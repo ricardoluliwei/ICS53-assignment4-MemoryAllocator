@@ -178,7 +178,7 @@ int main(int argc, const char * argv[]) {
                if(strcmp(buffer, "malloc")==0){
                    buffer = strtok(NULL, spliter);
                    int size = atoi(buffer);
-                   printf("%d", def_malloc(size));
+                   printf("%d\n", def_malloc(size));
                    continue;
                }
                if(strcmp(buffer, "free")==0){
