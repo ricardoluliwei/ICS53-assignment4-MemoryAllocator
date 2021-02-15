@@ -148,6 +148,7 @@ void printmem(int index, int size){
 
 int main(int argc, const char * argv[]) {
     // insert code here...
+    init();
     char input[800], *buffer;
         //int bufsize = MAX_LINE;
         char* spliter = " \n";
