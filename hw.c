@@ -161,25 +161,28 @@ int main(int argc, const char * argv[]) {
                if(strcmp(input, "quit") == 0){break;}
                buffer = strtok(input, spliter);
                if(strcmp(buffer, "malloc")==0){
+                   buffer = strtok(NULL, spliter);
                    int size = atoi(buffer);
                    def_malloc(size);
                    continue;
                }
                if(strcmp(buffer, "free")==0){
+                   buffer = strtok(NULL, spliter);
                    int index = atoi(buffer);
                    def_free(index);
                    continue;
                }
                if(strcmp(buffer, "writemem")==0){
+                   buffer = strtok(NULL, spliter);
                    int index = atoi(buffer);
-                   buffer = strtok(input, spliter);
-                   char* input = buffer;
-                   writemem(index, input);
+                   buffer = strtok(NULL, spliter);
+                   writemem(index, buffer);
                    continue;
                }
                if(strcmp(buffer, "printmem")==0){
+                   buffer = strtok(NULL, spliter);
                    int index = atoi(buffer);
-                   buffer = strtok(input, spliter);
+                   buffer = strtok(NULL, spliter);
                    int size = atoi(buffer);
                    printmem(index, size);
                    continue;
