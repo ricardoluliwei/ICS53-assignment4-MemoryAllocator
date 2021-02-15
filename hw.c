@@ -45,7 +45,6 @@ int read_status(char header){
 }
 
 void init(){
-    memset(heap, 0, HEAP_SIZE);
     set_header_footer(0, HEAP_SIZE, SET_FREE);
 }
 
@@ -119,11 +118,25 @@ void def_free(int index){
 }
 
 
-void blocklist(){};
+void blocklist(){
+    int p = 0;
+    int start;
+    char header;
+    int payload_size;
+    char* status;
+
+    while (p < HEAP_SIZE){
+        header = heap[p];
+        start = p + 1;
+        payload_size = read_size(header) - 2;
+        status = read_status(header) ? "allocated" : "free";
+        printf("%d, %d, %s.\n", start, payload_size, status);
+    }
+}
 
 
 void writemem(int index, char* str){
-    memcpy(&heap[index], &str, strlen(str));
+    memcpy(&heap[index], str, strlen(str));
 }
 
 
@@ -149,6 +162,7 @@ void printmem(int index, int size){
 
 int main(int argc, const char * argv[]) {
     // insert code here...
+    init();
     char input[800], *buffer;
         //int bufsize = MAX_LINE;
         char* spliter = " \n";
@@ -163,7 +177,7 @@ int main(int argc, const char * argv[]) {
                if(strcmp(buffer, "malloc")==0){
                    buffer = strtok(NULL, spliter);
                    int size = atoi(buffer);
-                   def_malloc(size);
+                   printf("%d", def_malloc(size));
                    continue;
                }
                if(strcmp(buffer, "free")==0){
