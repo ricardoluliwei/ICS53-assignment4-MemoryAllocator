@@ -20,7 +20,7 @@ void set_header_footer(int pos, int block_size, int status){
     if (block_size == 0)
         return;
     
-    int8_t header = 0;
+    char header = 0;
     if(status == SET_ALLOCATED){
         header = block_size | SET_ALLOCATED;
     } else {
@@ -32,13 +32,13 @@ void set_header_footer(int pos, int block_size, int status){
     memset(&heap[pos+1], 0, block_size - 2);
 }
 
-int read_size(int8_t header){
+int read_size(char header){
     int block_size;
     block_size = (int) header & SET_FREE;
     return block_size;
 }
 
-int read_status(int8_t header){
+int read_status(char header){
     int status;
     status = (int) header & SET_ALLOCATED;
     return status;
@@ -51,7 +51,7 @@ void init(){
 
 int def_malloc(int size){
     int p = 0;
-    int8_t header;
+    char header;
     int block_size;
     int block_status;
     int remain_size;
@@ -81,9 +81,9 @@ int def_malloc(int size){
 
 
 void def_free(int index){
-    int8_t header;
-    int8_t n_header;
-    int8_t p_header;
+    char header;
+    char n_header;
+    char p_header;
     int p_size;
     int n_size;
     int block_size;
