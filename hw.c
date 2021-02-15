@@ -22,9 +22,9 @@ void set_header_footer(int pos, int block_size, int status){
     
     char header = 0;
     if(status == SET_ALLOCATED){
-        header = block_size | SET_ALLOCATED;
+        header = block_size << 1 | SET_ALLOCATED;
     } else {
-        header = block_size & SET_FREE;
+        header = block_size << 1 & SET_FREE;
     }
     heap[pos] = header;
     heap[pos + block_size - 1] = header;
@@ -34,7 +34,7 @@ void set_header_footer(int pos, int block_size, int status){
 
 int read_size(char header){
     int block_size;
-    block_size = (int) header & SET_FREE;
+    block_size = (unsigned char) header >> 1;
     return block_size;
 }
 
