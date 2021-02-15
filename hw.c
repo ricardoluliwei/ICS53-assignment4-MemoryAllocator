@@ -16,26 +16,26 @@
 
 unsigned char heap[HEAP_SIZE];
 
-void set_header_footer(int pos, int size, int status){
-    if (size == 0)
+void set_header_footer(int pos, int block_size, int status){
+    if (block_size == 0)
         return;
     
     int8_t header = 0;
     if(status == SET_ALLOCATED){
-        header = size | SET_ALLOCATED;
+        header = block_size | SET_ALLOCATED;
     } else {
-        header = size & SET_FREE;
+        header = block_size & SET_FREE;
     }
     heap[pos] = header;
-    heap[pos + size - 1] = header;
+    heap[pos + block_size - 1] = header;
     // clear the payload space
-    memset(&heap[pos+1], 0, size - 2);
+    memset(&heap[pos+1], 0, block_size - 2);
 }
 
 int read_size(int8_t header){
-    int size;
-    size = (int) header & SET_FREE;
-    return size;
+    int block_size;
+    block_size = (int) header & SET_FREE;
+    return block_size;
 }
 
 int read_status(int8_t header){
@@ -52,28 +52,28 @@ void init(){
 int def_malloc(int size){
     int p = 0;
     int8_t header;
-    int h_size;
-    int h_status;
+    int block_size;
+    int block_status;
     int remain_size;
-    int new_size;
+    int new_block_size;
 
-    new_size = size + 2;
+    new_block_size = size + 2;
 
     while (p < HEAP_SIZE){
         header = heap[p];
-        h_size = read_size(header);
-        h_status = read_status(status);
-        remain_size = h_size - new_size; // if we allocate this block, how much space remain
+        block_size = read_size(header);
+        block_status = read_status(header);
+        remain_size = block_size - new_block_size; // if we allocate this block, how much space remain
 
         // if the header size is ok and status is empty, we found a block to allocate
-        if(remain_size > 0 && h_status == 0){
+        if(remain_size > 0 && block_status == 0){
             // This code works in both case: need to split or not
-            set_header_footer(p, new_size, SET_ALLOCATED);
-            set_header_footer(p + new_size, remain_size, SET_FREE);
+            set_header_footer(p, new_block_size, SET_ALLOCATED);
+            set_header_footer(p + new_block_size, remain_size, SET_FREE);
             return p + 1;
         }
 
-        p += h_size; // move p to next
+        p += block_size; // move p to next
     }
     
     return -1; // if no space to allocate
@@ -81,7 +81,41 @@ int def_malloc(int size){
 
 
 void def_free(int index){
-    int size = heap[index]&SET_FREE;
+    int8_t header;
+    int8_t n_header;
+    int8_t p_header;
+    int p_size;
+    int n_size;
+    int block_size;
+    int new_block_size;
+    int p;
+   
+
+    p = index - 1;
+    header = heap[p];
+    block_size = read_size(header);
+    new_block_size = block_size;
+
+    if (index - 2 >= 0){
+        // previous block exists
+        p_header = heap[index - 2]; // previous footer
+        if(!read_status(p_header)){ // previous block is empty
+            p_size = read_size(p_header);
+            p -= p_size;
+            new_block_size += p_size;
+        }
+    } 
+
+    if (index + block_size - 1 < HEAP_SIZE){
+        // next block exists
+        n_header = heap[index + block_size - 1]; // next header
+        if(!read_status(n_header)){ // next block is empty
+            n_size = read_size(n_header);
+            new_block_size += n_size;
+        }
+    } 
+    
+    set_header_footer(p, new_block_size, SET_FREE);
 }
 
 
