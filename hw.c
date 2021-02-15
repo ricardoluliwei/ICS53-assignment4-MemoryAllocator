@@ -45,7 +45,6 @@ int read_status(char header){
 }
 
 void init(){
-    memset(heap, 0, HEAP_SIZE);
     set_header_footer(0, HEAP_SIZE, SET_FREE);
 }
 
