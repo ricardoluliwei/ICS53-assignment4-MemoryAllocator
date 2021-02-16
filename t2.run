@@ -1,3 +1,4 @@
-writemem 1 HELLOTHERE
-printmem 1 10
+
+writemem 5 ABC 
+printmem 5 3
 quit

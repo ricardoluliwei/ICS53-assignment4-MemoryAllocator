@@ -1,6 +1,6 @@
+
 malloc 10
 malloc 5
-malloc 2
-printmem 0 25
+blocklist
 free 1
 quit
