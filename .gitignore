@@ -2,3 +2,5 @@ assignment4.pdf
 .vscode
 hw.dSYM
 hw
+*.zip
+.DS_Store
