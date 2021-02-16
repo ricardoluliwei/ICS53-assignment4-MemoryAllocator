@@ -131,6 +131,7 @@ void blocklist(){
         payload_size = read_size(header) - 2;
         status = read_status(header) ? "allocated" : "free";
         printf("%d, %d, %s.\n", start, payload_size, status);
+        p += payload_size + 2;
     }
 }
 
