@@ -141,21 +141,9 @@ void writemem(int index, char* str){
 
 
 void printmem(int index, int size){
-    char hexnumber[3];
     int i;
-    for(i=0; i< size; i++){
-        int ASC = (int) heap[index + i];
-        int firstbit = ASC /16;
-        hexnumber[0] = firstbit + 48;
-        int rem = ASC%16;
-        if(rem <10){
-            hexnumber[1] = rem +48;
-        }else{
-            hexnumber[1] = rem + 55;
-        }
-        hexnumber[2] = 0;
-        printf("%s ", hexnumber);
-    }
+    for(i=0; i< size; i++)
+        printf("%X ", heap[index + i]);
     printf("\n");
 }
 
