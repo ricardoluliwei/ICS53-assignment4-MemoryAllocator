@@ -22,9 +22,9 @@ void set_header_footer(int pos, int block_size, int status){
     
     char header = 0;
     if(status == SET_ALLOCATED){
-        header = block_size | SET_ALLOCATED;
+        header = block_size << 1 | SET_ALLOCATED;
     } else {
-        header = block_size & SET_FREE;
+        header = block_size << 1 & SET_FREE;
     }
     heap[pos] = header;
     heap[pos + block_size - 1] = header;
@@ -34,7 +34,7 @@ void set_header_footer(int pos, int block_size, int status){
 
 int read_size(char header){
     int block_size;
-    block_size = (int) header & SET_FREE;
+    block_size = (unsigned char) header >> 1;
     return block_size;
 }
 
@@ -141,10 +141,10 @@ void writemem(int index, char* str){
 
 
 void printmem(int index, int size){
-    char hexnumber[2];
+    char hexnumber[3];
     int i;
     for(i=0; i< size; i++){
-        int ASC = (int) heap[index];
+        int ASC = (int) heap[index + i];
         int firstbit = ASC /16;
         hexnumber[0] = firstbit + 48;
         int rem = ASC%16;
@@ -153,6 +153,7 @@ void printmem(int index, int size){
         }else{
             hexnumber[1] = rem + 55;
         }
+        hexnumber[2] = 0;
         printf("%s ", hexnumber);
     }
     printf("\n");
@@ -177,7 +178,7 @@ int main(int argc, const char * argv[]) {
                if(strcmp(buffer, "malloc")==0){
                    buffer = strtok(NULL, spliter);
                    int size = atoi(buffer);
-                   printf("%d", def_malloc(size));
+                   printf("%d\n", def_malloc(size));
                    continue;
                }
                if(strcmp(buffer, "free")==0){
