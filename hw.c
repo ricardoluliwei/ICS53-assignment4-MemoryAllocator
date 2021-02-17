@@ -2,7 +2,7 @@
 //  main.c
 //  53-Assignment4
 //
-//  Created by Tony on 2021/2/14.
+//  Created by Qiwei He and Liwei Lu on 2021/2/14.
 //
 
 #include <stdio.h>

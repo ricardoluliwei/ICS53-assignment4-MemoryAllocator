@@ -1,6 +1,6 @@
 # University of California, Irvine
 # ICS 53
-# Author: Liwei Lu
+# Author: Liwei Lu and Qiwei He
 # This Makefile is able to compile all c file in the src folder
 # and put the ELF file in the build folder.
 
