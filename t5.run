@@ -1,2 +1,8 @@
 
 malloc 10
+malloc 5
+malloc 2
+printmem 0 127
+writemem 2make abcdefg
+blocklist
+quit

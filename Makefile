@@ -24,17 +24,19 @@ all: $(EXECUTABLES)
 clean:
 	@rm -rf $(REMOVE)
 	@rm -rf $(wildcard *.gcda) $(wildcard *.gcno) $(wildcard core*)
+	@rm hw.c.gcov
 	@echo Clean All!
 
 clean-%:
 	@rm -rf $*.gcda $*.gcno 
-	@rm *.dSYM
 	@rm -r hw
 	@echo Clean 
 
 test:
-	zip -q -r hw.zip *
-	zip -dv hw.zip *.py
-	zip -dv hw.zip Makefile
-	python3 autocov.py
+	@zip -q -r hw.zip *
+	@zip -dv hw.zip *.py
+	@zip -dv hw.zip Makefile
+	@python3 autocov.py
+	@mv ./hw/hw.c.gcov ./
+	@rm -r hw
 	@rm hw.zip
