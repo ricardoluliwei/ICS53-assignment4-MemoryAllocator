@@ -1,9 +1,5 @@
-//
-//  main.c
-//  53-Assignment4
-//
-//  Created by Tony on 2021/2/14.
-//
+//  Created by Qiwei He 47771452 and Liwei Lu 90101531 on 2021/2/14.
+
 
 #include <stdio.h>
 #include <limits.h>

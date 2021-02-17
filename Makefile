@@ -1,6 +1,6 @@
 # University of California, Irvine
 # ICS 53
-# Author: Liwei Lu
+# Author: Liwei Lu and Qiwei He
 # This Makefile is able to compile all c file in the src folder
 # and put the ELF file in the build folder.
 
@@ -12,7 +12,7 @@ REMOVE := $(patsubst %.c, %, $(SOURCES))
 EXECUTABLES := $(patsubst %.c, %, $(SOURCES))
 
 
-.PHONY: all clean 
+.PHONY: all clean test
 .PRECIOUS: build/% 
 
 all: $(EXECUTABLES)
@@ -24,8 +24,20 @@ all: $(EXECUTABLES)
 clean:
 	@rm -rf $(REMOVE)
 	@rm -rf $(wildcard *.gcda) $(wildcard *.gcno) $(wildcard core*)
+	@rm hw.c.gcov
+	@rm -r hw.dSYM
 	@echo Clean All!
 
 clean-%:
-	@rm -rf $*.gcda $*.gcno
+	@rm -rf $*.gcda $*.gcno 
+	@rm -r hw
 	@echo Clean 
+
+test:
+	@zip -q -r hw.zip *
+	@zip -dv hw.zip *.py
+	@zip -dv hw.zip Makefile
+	@python3 autocov.py
+	@mv ./hw/hw.c.gcov ./
+	@rm -r hw
+	@rm hw.zip

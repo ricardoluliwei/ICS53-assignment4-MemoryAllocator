@@ -1,0 +1,205 @@
+        -:    0:Source:hw.c
+        -:    0:Graph:hw.gcno
+        -:    0:Data:hw.gcda
+        -:    0:Runs:5
+        -:    0:Programs:1
+        -:    1://
+        -:    2://  main.c
+        -:    3://  53-Assignment4
+        -:    4://
+        -:    5://  Created by Tony on 2021/2/14.
+        -:    6://
+        -:    7:
+        -:    8:#include <stdio.h>
+        -:    9:#include <limits.h>
+        -:   10:#include "stdlib.h"
+        -:   11:#include "string.h"
+        -:   12:#define MAX_LINE 80
+        -:   13:#define SET_FREE -2
+        -:   14:#define SET_ALLOCATED 1
+        -:   15:#define HEAP_SIZE 127
+        -:   16:
+        -:   17:unsigned char heap[HEAP_SIZE];
+        -:   18:
+       32:   19:void set_header_footer(int pos, int block_size, int status){
+       32:   20:    if (block_size == 0)
+        1:   21:        return;
+        -:   22:    
+       31:   23:    char header = 0;
+       31:   24:    if(status == SET_ALLOCATED){
+       10:   25:        header = block_size << 1 | SET_ALLOCATED;
+       10:   26:    } else {
+       21:   27:        header = block_size << 1 & SET_FREE;
+        -:   28:    }
+       31:   29:    heap[pos] = header;
+       31:   30:    heap[pos + block_size - 1] = header;
+        -:   31:    // clear the payload space
+       31:   32:    memset(&heap[pos+1], 0, block_size - 2);
+       32:   33:}
+        -:   34:
+       52:   35:int read_size(char header){
+        -:   36:    int block_size;
+       52:   37:    block_size = (unsigned char) header >> 1;
+       52:   38:    return block_size;
+        -:   39:}
+        -:   40:
+       51:   41:int read_status(char header){
+        -:   42:    int status;
+       51:   43:    status = (int) header & SET_ALLOCATED;
+       51:   44:    return status;
+        -:   45:}
+        -:   46:
+        5:   47:void init(){
+        5:   48:    set_header_footer(0, HEAP_SIZE, SET_FREE);
+        5:   49:}
+        -:   50:
+       11:   51:int def_malloc(int size){
+       11:   52:    int p = 0;
+        -:   53:    char header;
+        -:   54:    int block_size;
+        -:   55:    int block_status;
+        -:   56:    int remain_size;
+        -:   57:    int new_block_size;
+        -:   58:
+       11:   59:    new_block_size = size + 2;
+        -:   60:
+       20:   61:    while (p < HEAP_SIZE){
+       19:   62:        header = heap[p];
+       19:   63:        block_size = read_size(header);
+       19:   64:        block_status = read_status(header);
+       19:   65:        remain_size = block_size - new_block_size; // if we allocate this block, how much space remain
+        -:   66:
+        -:   67:        // if the header size is ok and status is empty, we found a block to allocate
+       19:   68:        if(remain_size >= 0 && block_status == 0){
+        -:   69:            // This code works in both case: need to split or not
+       10:   70:            set_header_footer(p, new_block_size, SET_ALLOCATED);
+       10:   71:            set_header_footer(p + new_block_size, remain_size, SET_FREE);
+       10:   72:            return p + 1;
+        -:   73:        }
+        -:   74:
+        9:   75:        p += block_size; // move p to next
+        -:   76:    }
+        -:   77:    
+        1:   78:    return -1; // if no space to allocate
+       11:   79:}
+        -:   80:
+        -:   81:
+        7:   82:void def_free(int index){
+        -:   83:    char header;
+        -:   84:    char n_header;
+        -:   85:    char p_header;
+        -:   86:    int p_size;
+        -:   87:    int n_size;
+        -:   88:    int block_size;
+        -:   89:    int new_block_size;
+        -:   90:    int p;
+        -:   91:   
+        -:   92:
+        7:   93:    p = index - 1;
+        7:   94:    header = heap[p];
+        7:   95:    block_size = read_size(header);
+        7:   96:    new_block_size = block_size;
+        -:   97:
+        7:   98:    if (index - 2 >= 0){
+        -:   99:        // previous block exists
+        4:  100:        p_header = heap[index - 2]; // previous footer
+        4:  101:        if(!read_status(p_header)){ // previous block is empty
+        2:  102:            p_size = read_size(p_header);
+        2:  103:            p -= p_size;
+        2:  104:            new_block_size += p_size;
+        2:  105:        }
+        4:  106:    } 
+        -:  107:
+        7:  108:    if (index + block_size - 1 < HEAP_SIZE){
+        -:  109:        // next block exists
+        7:  110:        n_header = heap[index + block_size - 1]; // next header
+        7:  111:        if(!read_status(n_header)){ // next block is empty
+        3:  112:            n_size = read_size(n_header);
+        3:  113:            new_block_size += n_size;
+        3:  114:        }
+        7:  115:    } 
+        -:  116:    
+        7:  117:    set_header_footer(p, new_block_size, SET_FREE);
+        7:  118:}
+        -:  119:
+        -:  120:
+        6:  121:void blocklist(){
+        6:  122:    int p = 0;
+        -:  123:    int start;
+        -:  124:    char header;
+        -:  125:    int payload_size;
+        -:  126:    char* status;
+        -:  127:
+       27:  128:    while (p < HEAP_SIZE){
+       21:  129:        header = heap[p];
+       21:  130:        start = p + 1;
+       21:  131:        payload_size = read_size(header) - 2;
+       21:  132:        status = read_status(header) ? "allocated" : "free";
+       21:  133:        printf("%d, %d, %s.\n", start, payload_size, status);
+       21:  134:        p += payload_size + 2;
+        -:  135:    }
+        6:  136:}
+        -:  137:
+        -:  138:
+        4:  139:void writemem(int index, char* str){
+        4:  140:    memcpy(&heap[index], str, strlen(str));
+        4:  141:}
+        -:  142:
+        -:  143:
+        6:  144:void printmem(int index, int size){
+        -:  145:    int i;
+      644:  146:    for(i=0; i< size; i++)
+      638:  147:        printf("%X ", heap[index + i]);
+        6:  148:    printf("\n");
+        6:  149:}
+        -:  150:
+        -:  151:
+        -:  152:
+        5:  153:int main(int argc, const char * argv[]) {
+        -:  154:    // insert code here...
+        5:  155:    init();
+        -:  156:    char input[800], *buffer;
+        -:  157:        //int bufsize = MAX_LINE;
+        5:  158:        char* spliter = " \n";
+        5:  159:        while (1) // while loop to get user input
+        -:  160:           {
+       39:  161:               printf("> ");
+       39:  162:               memset(input, 0, 80);
+       39:  163:               fgets(input, (sizeof input / sizeof input[0]), stdin);
+       39:  164:               if(input[strlen(input)-1] == '\n') input[strlen(input)-1]=0;
+       39:  165:               if(strcmp(input, "quit") == 0){break;}
+       34:  166:               buffer = strtok(input, spliter);
+       34:  167:               if(strcmp(buffer, "malloc")==0){
+       11:  168:                   buffer = strtok(NULL, spliter);
+       11:  169:                   int size = atoi(buffer);
+       11:  170:                   printf("%d\n", def_malloc(size));
+       11:  171:                   continue;
+        -:  172:               }
+       23:  173:               if(strcmp(buffer, "free")==0){
+        7:  174:                   buffer = strtok(NULL, spliter);
+        7:  175:                   int index = atoi(buffer);
+        7:  176:                   def_free(index);
+        7:  177:                   continue;
+        -:  178:               }
+       16:  179:               if(strcmp(buffer, "writemem")==0){
+        4:  180:                   buffer = strtok(NULL, spliter);
+        4:  181:                   int index = atoi(buffer);
+        4:  182:                   buffer = strtok(NULL, spliter);
+        4:  183:                   writemem(index, buffer);
+        4:  184:                   continue;
+        -:  185:               }
+       12:  186:               if(strcmp(buffer, "printmem")==0){
+        6:  187:                   buffer = strtok(NULL, spliter);
+        6:  188:                   int index = atoi(buffer);
+        6:  189:                   buffer = strtok(NULL, spliter);
+        6:  190:                   int size = atoi(buffer);
+        6:  191:                   printmem(index, size);
+        6:  192:                   continue;
+        -:  193:               }
+        6:  194:               if(strcmp(buffer, "blocklist")==0){
+        6:  195:                   blocklist();
+        6:  196:                   continue;
+        -:  197:               }
+        -:  198:           }
+        5:  199:        return 0;
+        -:  200:}
