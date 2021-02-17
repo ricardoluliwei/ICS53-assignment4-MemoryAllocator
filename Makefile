@@ -12,7 +12,7 @@ REMOVE := $(patsubst %.c, %, $(SOURCES))
 EXECUTABLES := $(patsubst %.c, %, $(SOURCES))
 
 
-.PHONY: all clean 
+.PHONY: all clean test
 .PRECIOUS: build/% 
 
 all: $(EXECUTABLES)
@@ -27,5 +27,14 @@ clean:
 	@echo Clean All!
 
 clean-%:
-	@rm -rf $*.gcda $*.gcno
+	@rm -rf $*.gcda $*.gcno 
+	@rm *.dSYM
+	@rm -r hw
 	@echo Clean 
+
+test:
+	zip -q -r hw.zip *
+	zip -dv hw.zip *.py
+	zip -dv hw.zip Makefile
+	python3 autocov.py
+	@rm hw.zip
