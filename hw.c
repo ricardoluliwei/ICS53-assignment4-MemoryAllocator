@@ -65,7 +65,7 @@ int def_malloc(int size){
         remain_size = block_size - new_block_size; // if we allocate this block, how much space remain
 
         // if the header size is ok and status is empty, we found a block to allocate
-        if(remain_size > 0 && block_status == 0){
+        if(remain_size >= 0 && block_status == 0){
             // This code works in both case: need to split or not
             set_header_footer(p, new_block_size, SET_ALLOCATED);
             set_header_footer(p + new_block_size, remain_size, SET_FREE);

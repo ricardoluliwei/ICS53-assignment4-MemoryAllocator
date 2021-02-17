@@ -3,6 +3,19 @@ malloc 10
 malloc 5
 malloc 2
 printmem 0 127
-writemem 2make abcdefg
+writemem 1 abcdefg
+writemem 13 abcde
+writemem 20 a
+printmem 0 127
+blocklist
+free 1
+malloc 10
+printmem 0 127
+blocklist
+free 13
+printmem 0 127
+blocklist
+free 20 
+printmem 0 127
 blocklist
 quit
