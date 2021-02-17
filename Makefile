@@ -25,6 +25,7 @@ clean:
 	@rm -rf $(REMOVE)
 	@rm -rf $(wildcard *.gcda) $(wildcard *.gcno) $(wildcard core*)
 	@rm hw.c.gcov
+	@rm -r hw.dSYM
 	@echo Clean All!
 
 clean-%:
