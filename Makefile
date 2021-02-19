@@ -34,10 +34,7 @@ clean-%:
 	@echo Clean 
 
 test:
-	@zip -q -r hw.zip *
-	@zip -dv hw.zip *.py
-	@zip -dv hw.zip Makefile
+	@zip -q -r hw.zip $(wildcard *.run hw.c)
 	@python3 autocov.py
 	@mv ./hw/hw.c.gcov ./
 	@rm -r hw
-	@rm hw.zip
